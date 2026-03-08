@@ -1,0 +1,46 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/**",
+				"${config:SDKTARGETSYSROOT}/usr/include/**",
+				"${config:SDKTARGETSYSROOT}/usr/include/gstreamer-1.0/**",
+				"${config:SDKTARGETSYSROOT}/usr/include/glib-2.0/**",
+				"${config:SDKTARGETSYSROOT}/usr/lib/glib-2.0/include/**"
+			],
+			"defines": [
+			],
+			"configurationProvider": "includePath",
+			"cStandard": "gnu99",
+			"cppStandard": "gnu++17",
+			"intelliSenseMode": "linux-gcc-arm64",
+			// "intelliSenseMode": "clang-arm64",
+			// "intelliSenseMode": "linux-gcc-x64",
+			// "compilerPath": "/usr/bin/gcc",
+			"compilerPath": "${config:COMPILER_PATH}",
+			"compilerArgs": [
+				"--sysroot=${config:SDKTARGETSYSROOT}",
+				"-march=armv8-a+crc+crypto",
+				"-fstack-protector-strong",
+				"-O2",
+				"-D_FORTIFY_SOURCE=2",
+				"-Wformat",
+				"-Wformat-security",
+				"-Werror=format-security",
+				"-shared",
+				"-fPIC",
+				"-D_FILE_OFFSET_BITS=64",
+				"-pipe",
+				"-Winvalid-pch",
+				"-feliminate-unused-debug-types",
+				"-Wall",
+				"-Wl,--no-undefined",
+				"-g"
+			],
+			"forcedInclude": [
+			]
+		}
+	],
+	"version": 4
+}

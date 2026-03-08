@@ -1,0 +1,24 @@
+{
+		/* Yocto SDK Configuration */
+	"ARCH": "aarch64-phytec-linux",
+	"OECORE_NATIVE_SYSROOT": "/opt/fslc-xwayland/4.0/sysroots/x86_64-fslcsdk-linux/",
+	"COMPILER_PATH": "${config:OECORE_NATIVE_SYSROOT}/usr/bin/aarch64-fslc-linux/aarch64-fslc-linux-gcc",
+	"SDKTARGETSYSROOT": "/opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/",
+	"CROSS_COMPILER": "${config:SDKTARGETSYSROOT}/usr/bin/aarch64-fslc-linux-",
+	"YOCTO_ENVIRONMENT": "/opt/fslc-xwayland/4.0/environment-setup-armv8a-fslc-linux",
+
+		/* Yocto SDK Constants */
+	"CC_PREFIX": "${config:OECORE_NATIVE_SYSROOT}/usr/bin/${config:ARCH}/${config:ARCH}-",
+	"CXX": "${config:CC_PREFIX}g++ --sysroot=${config:SDKTARGETSYSROOT}",
+	"CC": "${config:CC_PREFIX}gcc --sysroot=${config:SDKTARGETSYSROOT}",
+
+		/* Kernel */
+	"KERNEL_DIR": "~/imx8mp-var-dart-linux",
+
+		/* i.MX */
+	"BUILD_PATH": "build",
+	"PROGRAM": "opencv_test",
+	"REMOTE_USER": "root",
+	"TARGET_IP": "192.168.3.11",
+	"REMOTE_DIR": "/home/root/",
+}
