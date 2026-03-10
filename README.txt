@@ -2,7 +2,6 @@
 source /opt/fslc-xwayland/4.0/environment-setup-armv8a-fslc-linux; export LDFLAGS=
 
 opencv=$HOME/opencv_4_12_imx8mp_variscite/
-opencv2=$HOME/opencv_imx8mp_variscite/
 
 git clone -b 4.12.0 https://github.com/opencv/opencv
 mv opencv/ ${opencv}
@@ -16,11 +15,11 @@ cmake \
 	-DWITH_OPENJPEG=OFF \
 	-DBUILD_TESTS=OFF \
 	-DBUILD_PERF_TESTS=OFF \
+  -DBUILD_EXAMPLES=ON \
 	-DCMAKE_INSTALL_PREFIX=/usr \
 	-DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules/ \
 	..
 # -D CMAKE_BUILD_TYPE=Release
-# -D BUILD_EXAMPLES=ON
 
 make -j$(nproc)
 make install DESTDIR=install/
