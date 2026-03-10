@@ -8,7 +8,8 @@ all:
 			-lopencv_imgproc \
 			-lopencv_highgui \
 			-lopencv_videoio \
-			-lopencv_objdetect
+			-lopencv_objdetect \
+			-lopencv_tracking
 
 # `pkg-config --cflags --libs opencv4`
 
