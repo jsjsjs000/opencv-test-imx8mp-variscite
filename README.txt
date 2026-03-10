@@ -1,16 +1,18 @@
   # Build OpenCV 4.12.0 from github
 source /opt/fslc-xwayland/4.0/environment-setup-armv8a-fslc-linux; export LDFLAGS=
 
+opencv=$HOME/opencv_4_12_imx8mp_variscite/
 git clone https://github.com/opencv/opencv -b 4.12.0
-cd opencv/
+mv opencv/ ${opencv}
+cd ${opencv}/
 mkdir build
 cd build
 cmake -DWITH_OPENJPEG=OFF -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF ..
 make -j$(nproc)
 make install DESTDIR=install/
 
-ls $HOME/opencv/build/install/$HOME/opencv/build/install/include/opencv4/opencv2/
-ls $HOME/opencv/build/install/$HOME/opencv/build/install/lib/
+ls ${opencv}/build/install/${opencv}/build/install/include/opencv4/opencv2/
+ls ${opencv}/build/install/${opencv}/build/install/lib/
 
 ls /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/include/opencv4/opencv2/
 /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/lib/
@@ -39,7 +41,7 @@ sudo mv opencv4/ opencv4.6/
 cd ..
 
 # copy new OpenCV 4.12 to SDK toolchain
-cd ~/opencv/build/install/$HOME/opencv/build/install/
+cd ~/opencv/build/install/${opencv}/build/install/
 cd lib/
 sudo cp * /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/lib/
 cd ..
@@ -53,7 +55,7 @@ sudo cp -r opencv4/ /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/includ
 cd ..
 
   # copy new OpenCV 4.12 to i.MX
-cd ~/opencv/build/install/$HOME/opencv/build/install/
+cd ~/opencv/build/install/${opencv}/build/install/
 scp bin/* root@192.168.3.11:/usr/bin/
 scp lib/* root@192.168.3.11:/usr/lib/
 
