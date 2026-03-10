@@ -3,7 +3,6 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/objdetect.hpp>
-
 #include <iostream>
 
 int main()
@@ -11,7 +10,7 @@ int main()
 	cv::VideoCapture cap(
 			"v4l2src device=/dev/video2 ! "
 			"video/x-raw,width=1280,height=720,framerate=30/1 ! "
-			"videoconvert ! appsink",  // imxvideoconvert_g2d
+			"videoconvert ! video/x-raw,format=BGR ! appsink",  // imxvideoconvert_g2d
 			cv::CAP_GSTREAMER);
 	if (!cap.isOpened())
 	{
@@ -21,7 +20,7 @@ int main()
 
 	// cap.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
 	// cap.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
-	cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('N','V','1','2'));
+	// cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('N','V','1','2')); // warning
 
 	cv::CascadeClassifier face_cascade;
 	if (!face_cascade.load("haarcascade_frontalface_default.xml"))
@@ -33,13 +32,16 @@ int main()
 	cv::Mat frame, gray, edges;
 	cap >> frame;
 
-	std::cout << frame.cols << "x" << frame.rows << " " << frame.type() << " " << frame.channels() << "\n";
+	std::cout << frame.cols << "x" << frame.rows << " " << 
+			frame.type() << " " << frame.channels() << "\n";
 
 	std::string pipeline =
 			"appsrc is-live=true do-timestamp=true format=time ! "
-			"video/x-raw,width=" + std::to_string(frame.cols) + ",height=" + std::to_string(frame.rows) + ",framerate=30/1 ! " +
+			"video/x-raw,format=BGR,width=" + std::to_string(frame.cols) +
+					",height=" + std::to_string(frame.rows) + ",framerate=30/1 ! " +
 			"videoconvert ! " +
-			// "waylandsink sync=false window-width=" + std::to_string(frame.cols) + " window-height=" + std::to_string(frame.rows);
+			// "waylandsink sync=false window-width=" +
+			// 		std::to_string(frame.cols) + " window-height=" + std::to_string(frame.rows);
 			"fpsdisplaysink sync=false video-sink=\"waylandsink sync=false window-width=" +
 					std::to_string(frame.cols) + " window-height=" + std::to_string(frame.rows) + "\"";
 

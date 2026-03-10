@@ -2,6 +2,7 @@ BUILD_DIR := build
 PROGRAM = opencv_test
 
 all:
+	mkdir -p $(BUILD_DIR)
 	${CXX} main.cpp -o $(BUILD_DIR)/$(PROGRAM) \
 			-lopencv_core \
 			-lopencv_imgproc \

@@ -5,7 +5,7 @@ git clone https://github.com/opencv/opencv -b 4.12.0
 cd opencv/
 mkdir build
 cd build
-cmake -DWITH_OPENJPEG=OFF ..
+cmake -DWITH_OPENJPEG=OFF -D BUILD_TESTS=OFF -D BUILD_PERF_TESTS=OFF ..
 make -j$(nproc)
 make install DESTDIR=install/
 
