@@ -69,7 +69,7 @@ int main()
 			diff_us += 1000000;
 		memcpy(&last_ts, &ts, sizeof(ts));
 
-		printf("%2ld.%03d ms (+%2d ms)\n", ts.tv_sec % 60, us / 1000, diff_us / 1000);
+		printf("%2ld.%03d s (+%2d ms)\n", ts.tv_sec % 60, us / 1000, diff_us / 1000);
 
 		cap >> frame;
 		if (frame.empty())
