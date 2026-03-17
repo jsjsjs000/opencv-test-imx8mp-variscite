@@ -42,8 +42,8 @@ file lib/libopencv_core.so.4.12.0
 # backup OpenCV SDK toolchain
 cd /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/
 cd lib/
-sudo mkdir _opencv_4.6
-sudo mv libopencv* _opencv_4.6/
+sudo mkdir opencv_4.6
+sudo mv libopencv* opencv_4.6/
 cd ..
 
 cd bin/
@@ -77,6 +77,26 @@ scp lib/* root@192.168.3.11:/usr/lib/
   # upload xml file
 scp haarcascade_frontalface_default.xml root@192.168.3.11:/home/root/
 # downloaded from https://github.com/opencv/opencv/blob/master/data/haarcascades/haarcascade_frontalface_default.xml
+
+# ------------------------------------------------------------------------------
+
+  # restore backuped OpenCV 4.6 (orginal in Yocto)
+cd /opt/fslc-xwayland/4.0/sysroots/armv8a-fslc-linux/usr/
+cd lib/
+sudo cp opencv_4.6/* .
+cd ..
+
+cd bin/
+sudo cp _opencv_4.6/* .
+cd ..
+
+cd include/
+sudo cp -r opencv4.6/ opencv4/
+cd ..
+
+  # copy OpenCV 4.6 to i.MX
+scp bin/opencv* root@192.168.3.11:/usr/bin/
+scp lib/libopencv* root@192.168.3.11:/usr/lib/
 
 # ------------------------------------------------------------------------------
 
