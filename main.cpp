@@ -1,17 +1,19 @@
+#include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/objdetect.hpp>
 #include <opencv2/video/tracking.hpp>
-#include <iostream>
 
-#define UNUSED  __attribute__((unused))
+#define UNUSED   __attribute__((unused))
 #define STR(x)   #x
 #define XSTR(x)  STR(x)
 
-#define WIDTH   1280
-#define HEIGHT  720
+#define WIDTH      1280
+#define HEIGHT     720
+#define FORMAT     "YUY2"
+#define FRAMERATE  50
 
 // #define FACE_DETECT
 
@@ -19,7 +21,8 @@ int main(int argc, char *argv[])
 {
 	cv::VideoCapture cap(
 			"v4l2src device=/dev/video2 ! "
-			"video/x-raw,format=YUY2,width=" XSTR(WIDTH) ",height=" XSTR(HEIGHT) ",framerate=50/1 ! "
+			"video/x-raw,format=" FORMAT ",width=" XSTR(WIDTH) ",height=" XSTR(HEIGHT) 
+			  ",framerate=" XSTR(FRAMERATE) "/1 ! "
 			"appsink",
 			// "videoconvert ! video/x-raw,format=YUY2 ! appsink",  // imxvideoconvert_g2d
 			cv::CAP_GSTREAMER);
@@ -42,11 +45,20 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	cv::Mat frame, gray, edges;
+	cv::Mat frame;
 	cap >> frame;
 
-	printf("%dx%d, type=%d, channels=%d\n", frame.cols, frame.rows,
+#if defined(__ARM_NEON) || defined(__ARM_NEON__)
+	// #pragma message("Precompiler: ARM NEON exists")
+#endif
+
+	printf("\n");
+	printf("%dx%d, type=%d bits, channels=%d\n", frame.cols, frame.rows,
 			frame.type(), frame.channels());
+			printf("CV_CPU_FP16=%d\n", cv::checkHardwareSupport(CV_CPU_FP16));
+	printf("CV_CPU_NEON=%d\n", cv::checkHardwareSupport(CV_CPU_NEON));
+	printf("CPU Features: %s\n", cv::getCPUFeaturesLine().c_str());
+	printf("\n");
 
 	std::string pipeline =
 			"appsrc is-live=true do-timestamp=true format=time ! "
@@ -58,7 +70,7 @@ int main(int argc, char *argv[])
 			"fpsdisplaysink sync=false video-sink=\"waylandsink sync=false window-width=" +
 					std::to_string(frame.cols) + " window-height=" + std::to_string(frame.rows) + "\"";
 
-	cv::VideoWriter out(pipeline, cv::CAP_GSTREAMER, 0, 30, frame.size(), true);
+	cv::VideoWriter out(pipeline, cv::CAP_GSTREAMER, 0, FRAMERATE, frame.size(), true);
 
 	if (!out.isOpened())
 	{
@@ -67,6 +79,7 @@ int main(int argc, char *argv[])
 	}
 
 	struct timespec last_ts;
+	clock_gettime(CLOCK_REALTIME, &last_ts);
 	while (true)
 	{
 		// struct tm *tm_info = localtime(&ts.tv_sec);
@@ -86,14 +99,15 @@ int main(int argc, char *argv[])
 			break;
 
 #ifdef FACE_DETECT
-		// konwersja do grayscale
+		cv::Mat gray, edges
+			/* konwersja do grayscale */
 		// cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 		cv::cvtColor(frame, gray, cv::COLOR_YUV2GRAY_YUY2);
 
-		// wykrywanie krawędzi
+			/* wykrywanie krawędzi */
 		cv::Canny(gray, edges, 80, 150);
 
-		// wykrywanie twarzy
+			/* wykrywanie twarzy */
 		std::vector<cv::Rect> faces;
 		face_cascade.detectMultiScale(gray, faces);
 
