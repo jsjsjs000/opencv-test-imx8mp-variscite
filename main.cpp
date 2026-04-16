@@ -6,13 +6,20 @@
 #include <opencv2/video/tracking.hpp>
 #include <iostream>
 
+#define UNUSED  __attribute__((unused))
+#define STR(x)   #x
+#define XSTR(x)  STR(x)
+
+#define WIDTH   1280
+#define HEIGHT  720
+
 // #define FACE_DETECT
 
-int main()
+int main(int argc, char *argv[])
 {
 	cv::VideoCapture cap(
 			"v4l2src device=/dev/video2 ! "
-			"video/x-raw,format=YUY2,width=1280,height=720,framerate=50/1 ! "
+			"video/x-raw,format=YUY2,width=" XSTR(WIDTH) ",height=" XSTR(HEIGHT) ",framerate=50/1 ! "
 			"appsink",
 			// "videoconvert ! video/x-raw,format=YUY2 ! appsink",  // imxvideoconvert_g2d
 			cv::CAP_GSTREAMER);
@@ -22,16 +29,18 @@ int main()
 		return -1;
 	}
 
-	// cap.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
-	// cap.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+	// cap.set(cv::CAP_PROP_FRAME_WIDTH, WIDTH);
+	// cap.set(cv::CAP_PROP_FRAME_HEIGHT, HEIGHT);
 	// cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('N','V','1','2')); // warning
 
+#ifdef FACE_DETECT
 	cv::CascadeClassifier face_cascade;
 	if (!face_cascade.load("haarcascade_frontalface_default.xml"))
 	{
 		std::cerr << "Nie można załadować klasyfikatora twarzy\n";
 		return -1;
 	}
+#endif
 
 	cv::Mat frame, gray, edges;
 	cap >> frame;
@@ -60,9 +69,10 @@ int main()
 	struct timespec last_ts;
 	while (true)
 	{
+		// struct tm *tm_info = localtime(&ts.tv_sec);
+
 		struct timespec ts;
 		clock_gettime(CLOCK_REALTIME, &ts);
-		struct tm *tm_info = localtime(&ts.tv_sec);
 		int us = ts.tv_nsec / 1000;
 		int diff_us = (ts.tv_nsec - last_ts.tv_nsec) / 1000;
 		if (diff_us < 0)
